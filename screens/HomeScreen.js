@@ -13,6 +13,7 @@ import { FlatList } from "react-native-gesture-handler";
 import axios from "../api/axios";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import jwtDecode from "jwt-decode";
+import { formatearMonto } from "../components/dinero";
 
 export default function HomeScreen({ onLogout, navigation }) {
   const [cobrador, setCobrador] = useState({ id: null, name: "" });
@@ -23,11 +24,11 @@ export default function HomeScreen({ onLogout, navigation }) {
     const fetchCobradorData = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        console.log("*********Token:", token, "********"); 
+        console.log("*********Token:", token, "********");
         if (token) {
           try {
             const decoded = jwtDecode(token);
-            console.log("********* Decoded Token:", decoded, "********"); 
+            console.log("********* Decoded Token:", decoded, "********");
 
             const id = decoded.id;
             const name = decoded.name;
@@ -78,11 +79,20 @@ export default function HomeScreen({ onLogout, navigation }) {
   const renderDeudores = ({ item }) => (
     <TouchableOpacity
       style={styles.deudorItem}
-      onPress={() => navigation.navigate("DeudorDetail", { name: item.name })}
+      onPress={() =>
+        navigation.navigate("DeudorDetail", {
+          deudorId: item.id,
+          name: item.name,
+        })
+      }
     >
       <Text style={styles.deudorText}>Nombre - {item.name}</Text>
-      <Text style={styles.deudorText}>Monto a pagar {item.amount}</Text>
-      <Text style={styles.deudorText}>Balance {item.balance}</Text>
+      <Text style={styles.deudorText}>
+        Monto a pagar {formatearMonto(item.amount)}
+      </Text>
+      <Text style={styles.deudorText}>
+        Balance {formatearMonto(item.balance)}
+      </Text>
     </TouchableOpacity>
   );
 
