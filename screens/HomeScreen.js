@@ -76,25 +76,30 @@ export default function HomeScreen({ onLogout, navigation }) {
     }
   };
 
-  const renderDeudores = ({ item }) => (
-    <TouchableOpacity
-      style={styles.deudorItem}
-      onPress={() =>
-        navigation.navigate("DeudorDetail", {
-          deudorId: item.id,
-          name: item.name,
-        })
-      }
-    >
-      <Text style={styles.deudorText}>Nombre - {item.name}</Text>
-      <Text style={styles.deudorText}>
-        Monto a pagar {formatearMonto(item.amount)}
-      </Text>
-      <Text style={styles.deudorText}>
-        Balance {formatearMonto(item.balance)}
-      </Text>
-    </TouchableOpacity>
-  );
+  const renderDeudores = ({ item }) => {
+    console.log("Collector ID en renderDeudores:", cobrador.id);
+    return (
+      <TouchableOpacity
+        style={styles.deudorItem}
+        onPress={() =>
+          navigation.navigate("DeudorDetail", {
+            deudorId: item.id,
+            name: item.name,
+            collectorId: cobrador.id,
+            balance: item.balance,
+          })
+        }
+      >
+        <Text style={styles.deudorText}>Nombre - {item.name}</Text>
+        <Text style={styles.deudorText}>
+          Monto a pagar {formatearMonto(item.amount)}
+        </Text>
+        <Text style={styles.deudorText}>
+          Balance {formatearMonto(item.balance)}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaProvider>

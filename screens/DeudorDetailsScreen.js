@@ -1,15 +1,21 @@
 // DeudorDetailScreen.js
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import axios from "../api/axios";
 import { formatearMonto } from "../components/dinero";
-import HistorialPagos from "../components/HistorialPagos"; // Asegúrate de que la ruta sea correcta
+import HistorialPagos from "../components/HistorialPagos";
+import PagoNuevo from "../components/pagoNuevo";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function DeudorDetailScreen({ route }) {
-  const { deudorId, name } = route.params; // Recibe el ID del deudor
+  const { deudorId, name, collectorId, balance } = route.params;
+  console.log("IDs en DeudorDetailScreen:", { deudorId, collectorId });
+
   const [deudorDetails, setDeudorDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [cobros, setCobros] = useState([]); // Estado para el historial de pagos
 
+  // Obtener detalles del deudor cuando el componente se monta
   useEffect(() => {
     const fetchDeudorDetails = async () => {
       try {
@@ -24,6 +30,23 @@ export default function DeudorDetailScreen({ route }) {
 
     fetchDeudorDetails();
   }, [deudorId]);
+
+  // Función para cargar el historial de pagos
+  const cargarHistorialPagos = async () => {
+    try {
+      const response = await axios.get(`/cobros/deudor/${deudorId}`);
+      setCobros(response.data); // Actualizamos el estado del historial
+    } catch (error) {
+      console.error("Error al cargar el historial de pagos:", error);
+    }
+  };
+
+  // Cargar el historial de pagos cada vez que la pantalla vuelva a estar en foco
+  useFocusEffect(
+    useCallback(() => {
+      cargarHistorialPagos();
+    }, [deudorId])
+  );
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -47,8 +70,15 @@ export default function DeudorDetailScreen({ route }) {
             Balance: {formatearMonto(deudorDetails.balance)}
           </Text>
 
-          {/*  HistorialPagos  */}
-          <HistorialPagos debtorId={deudorId} />
+          {/* HistorialPagos */}
+          <HistorialPagos debtorId={deudorId} cobros={cobros} />
+          {/* Pago Nuevo */}
+          <PagoNuevo
+            collectorId={collectorId}
+            debtorId={deudorId}
+            actualizarHistorial={cargarHistorialPagos} // Usamos cargarHistorialPagos aquí
+            balance={balance}
+          />
         </>
       )}
     </View>
