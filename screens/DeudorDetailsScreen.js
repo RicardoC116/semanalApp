@@ -31,6 +31,16 @@ export default function DeudorDetailScreen({ route }) {
     fetchDeudorDetails();
   }, [deudorId]);
 
+  // Función para cargar los detalles del deudor
+  const cargarDetallesDeudor = async () => {
+    try {
+      const response = await axios.get(`/deudores/${deudorId}`);
+      setDeudorDetails(response.data); // Actualiza los detalles del deudor
+    } catch (error) {
+      console.error("Error al cargar los detalles del deudor:", error);
+    }
+  };
+
   // Función para cargar el historial de pagos
   const cargarHistorialPagos = async () => {
     try {
@@ -41,12 +51,25 @@ export default function DeudorDetailScreen({ route }) {
     }
   };
 
+  // Usa `useFocusEffect` para recargar los detalles al volver a la pantalla
+  useFocusEffect(
+    useCallback(() => {
+      cargarDetallesDeudor();
+    }, [deudorId])
+  );
+
   // Cargar el historial de pagos cada vez que la pantalla vuelva a estar en foco
   useFocusEffect(
     useCallback(() => {
       cargarHistorialPagos();
     }, [deudorId])
   );
+
+  // Nueva función para actualizar ambos: balance y el historial de pagos
+  const actualizarPantalla = () => {
+    cargarDetallesDeudor();
+    cargarHistorialPagos();
+  };
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -64,9 +87,6 @@ export default function DeudorDetailScreen({ route }) {
             Total a pagar: {formatearMonto(deudorDetails.total_to_pay)}
           </Text>
           <Text style={styles.detailText}>
-            Primer pago: {formatearMonto(deudorDetails.first_payment)}
-          </Text>
-          <Text style={styles.detailText}>
             Balance: {formatearMonto(deudorDetails.balance)}
           </Text>
 
@@ -76,7 +96,7 @@ export default function DeudorDetailScreen({ route }) {
           <PagoNuevo
             collectorId={collectorId}
             debtorId={deudorId}
-            actualizarHistorial={cargarHistorialPagos} // Usamos cargarHistorialPagos aquí
+            actualizarPantalla={actualizarPantalla} // Pasamos la nueva función aquí
             balance={balance}
           />
         </>

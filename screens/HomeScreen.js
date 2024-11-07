@@ -14,6 +14,7 @@ import axios from "../api/axios";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import jwtDecode from "jwt-decode";
 import { formatearMonto } from "../components/dinero";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen({ onLogout, navigation }) {
   const [cobrador, setCobrador] = useState({ id: null, name: "" });
@@ -50,6 +51,14 @@ export default function HomeScreen({ onLogout, navigation }) {
     fetchCobradorData();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      if (cobrador.id) {
+        fetchDeudores(cobrador.id);
+      }
+    }, [cobrador.id]) // Dependencia en el ID del cobrador
+  );
+  
   // Lista de deudores
   const fetchDeudores = useCallback(async (cobradorId) => {
     setIsLoading(true);

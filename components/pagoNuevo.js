@@ -1,9 +1,10 @@
+// PagoNuevo.js
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
 import axios from "../api/axios";
 import { formatearMonto } from "./dinero";
 
-const PagoNuevo = ({ collectorId, debtorId, actualizarHistorial, balance }) => {
+const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
   console.log("IDs en PagoNuevo:", { collectorId, debtorId });
 
   const [amount, setAmount] = useState("");
@@ -42,8 +43,8 @@ const PagoNuevo = ({ collectorId, debtorId, actualizarHistorial, balance }) => {
         Alert.alert("Éxito", "El pago fue registrado exitosamente.");
         setAmount(""); // Reinicia el monto
 
-        // Actualizamos el historial de pagos después de un pago exitoso
-        actualizarHistorial();
+        // Actualizar Pantalla
+        actualizarPantalla();
       }
     } catch (error) {
       console.error("Error al registrar el pago:", error);
