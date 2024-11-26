@@ -1,4 +1,4 @@
-//HomeScreen
+// HomeScreen.js
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -8,62 +8,52 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatList } from "react-native-gesture-handler";
 import axios from "../api/axios";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import jwtDecode from "jwt-decode";
 import { formatearMonto } from "../components/dinero";
 import { useFocusEffect } from "@react-navigation/native";
+import useAuth from "../hooks/useAuth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function HomeScreen({ onLogout, navigation }) {
-  const [cobrador, setCobrador] = useState({ id: null, name: "" });
+export default function HomeScreen({ navigation, onLogout }) {
+  const { user } = useAuth();
   const [deudores, setDeudores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCobradorData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        console.log("*********Token:", token, "********");
-        if (token) {
-          try {
-            const decoded = jwtDecode(token);
-            console.log("********* Decoded Token:", decoded, "********");
-
-            const id = decoded.id;
-            const name = decoded.name;
-            if (id && name) {
-              setCobrador({ id, name });
-              fetchDeudores(id);
-            } else {
-              console.warn("ID o nombre no encontrados en el token.");
-            }
-          } catch (error) {
-            console.error("Error al decodificar el token:", error);
-          }
-        }
-      } catch (error) {
-        console.error("Error al obtener datos del cobrador:", error);
-      }
-    };
-
-    fetchCobradorData();
-  }, []);
-
+  // Fetch deudores por primera vez y al enfocar la pantalla
   useFocusEffect(
     useCallback(() => {
-      if (cobrador.id) {
-        fetchDeudores(cobrador.id);
+      if (user?.id) {
+        fetchDeudores(user?.id);
       }
-    }, [cobrador.id]) // Dependencia en el ID del cobrador
+    }, [user?.id])
+    // useCallback(() => {
+    //   if (user && user.id) {
+    //     fetchDeudores();
+    //   }
+    // }, [user?.id])
   );
-  
+
+  // Fetch deudores y actualizar periódicamente mientras esté en la pantalla
+  // useEffect(() => {
+  //   if (user && user.id) {
+  //     fetchDeudores();
+
+  //     const intervalId = setInterval(() => {
+  //       fetchDeudores();
+  //     }, 20000);
+
+  //     return () => clearInterval(intervalId);
+  //   }
+  // }, [user?.id]);
+
   // Lista de deudores
-  const fetchDeudores = useCallback(async (cobradorId) => {
-    setIsLoading(true);
+  const fetchDeudores = useCallback(async () => {
+    if (!user?.id) {
+    }
     try {
-      const response = await axios.get(`/deudores/cobrador/${cobradorId}`);
+      const response = await axios.get(`/deudores/cobrador/${user.id}`);
       setDeudores(response.data);
     } catch (error) {
       console.error("Error al obtener deudores:", error);
@@ -71,9 +61,9 @@ export default function HomeScreen({ onLogout, navigation }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [user?.id]);
 
-  // Cerrar sesion
+  // Cerrar sesión
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("token");
@@ -85,8 +75,8 @@ export default function HomeScreen({ onLogout, navigation }) {
     }
   };
 
+  // Renderiza los elementos de la lista de deudores
   const renderDeudores = ({ item }) => {
-    console.log("Collector ID en renderDeudores:", cobrador.id);
     return (
       <TouchableOpacity
         style={styles.deudorItem}
@@ -94,7 +84,7 @@ export default function HomeScreen({ onLogout, navigation }) {
           navigation.navigate("DeudorDetail", {
             deudorId: item.id,
             name: item.name,
-            collectorId: cobrador.id,
+            collectorId: user.id,
             balance: item.balance,
           })
         }
@@ -115,7 +105,7 @@ export default function HomeScreen({ onLogout, navigation }) {
       <SafeAreaView style={styles.areaContainer}>
         <View style={styles.container}>
           <Text style={styles.welcomeText}>
-            ¡Bienvenido, {cobrador.name}! (ID: {cobrador.id})
+            ¡Bienvenido, {user?.name}! (ID: {user?.id})
           </Text>
 
           {isLoading ? (
@@ -161,7 +151,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-
   deudorText: {
     fontSize: 16,
     color: "#333",

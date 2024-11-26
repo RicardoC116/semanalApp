@@ -8,6 +8,7 @@ import useAuth from "./hooks/useAuth";
 export default function App() {
   const { isAuthenticated, isLoading, login, logout } = useAuth();
 
+  // Pantalla de carga mientras la autenticación está en proceso
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

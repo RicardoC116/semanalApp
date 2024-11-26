@@ -12,8 +12,8 @@ const HistorialPagos = ({ cobros }) => {
         renderItem={({ item }) => (
           <View style={styles.paymentItem}>
             <Text style={styles.paymentText}>
-              Monto: {formatearMonto(item.amount)}  -  
-              Fecha: {new Date(item.payment_Date).toLocaleDateString()}
+              Monto: {formatearMonto(item.amount)} - Fecha:
+              {new Date(item.payment_date).toLocaleDateString()}
             </Text>
           </View>
         )}

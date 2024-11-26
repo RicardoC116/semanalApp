@@ -27,11 +27,11 @@ const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
 
     try {
       const paymentData = {
-        collector_Id: collectorId,
-        debtor_Id: debtorId,
+        collector_id: collectorId,
+        debtor_id: debtorId,
         amount: parseFloat(amount),
-        payment_Date: new Date().toISOString(),
-        payment_Type: "normal",
+        payment_date: new Date().toISOString(),
+        payment_type: "normal",
       };
 
       console.log("Datos de pago enviados:", paymentData);
