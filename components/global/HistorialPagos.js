@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import { formatearMonto } from "../components/dinero";
+import { formatearMonto } from "../custom/dinero";
 
 const HistorialPagos = ({ cobros }) => {
   return (

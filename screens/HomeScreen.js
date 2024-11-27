@@ -11,7 +11,7 @@ import {
 import { FlatList } from "react-native-gesture-handler";
 import axios from "../api/axios";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { formatearMonto } from "../components/dinero";
+import { formatearMonto } from "../components/custom/dinero";
 import { useFocusEffect } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import AsyncStorage from "@react-native-async-storage/async-storage";

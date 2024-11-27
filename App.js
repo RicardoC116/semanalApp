@@ -1,7 +1,7 @@
 // App.js
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import AuthNavigator from "./components/AutNavigator";
+import AuthNavigator from "./components/routes/AutNavigator";
 import { ActivityIndicator, View } from "react-native";
 import useAuth from "./hooks/useAuth";
 

@@ -1,8 +1,8 @@
 // PagoNuevo.js
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
-import axios from "../api/axios";
-import { formatearMonto } from "./dinero";
+import axios from "../../api/axios";
+import { formatearMonto } from "../custom/dinero";
 
 const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
   console.log("IDs en PagoNuevo:", { collectorId, debtorId });
@@ -31,7 +31,6 @@ const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
         debtor_id: debtorId,
         amount: parseFloat(amount),
         payment_date: new Date().toISOString(),
-        payment_type: "normal",
       };
 
       console.log("Datos de pago enviados:", paymentData);

@@ -2,9 +2,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import axios from "../api/axios";
-import { formatearMonto } from "../components/dinero";
-import HistorialPagos from "../components/HistorialPagos";
-import PagoNuevo from "../components/pagoNuevo";
+import { formatearMonto } from "../components/custom/dinero";
+import HistorialPagos from "../components/global/HistorialPagos";
+import PagoNuevo from "../components/global/pagoNuevo";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function DeudorDetailScreen({ route }) {
@@ -96,7 +96,7 @@ export default function DeudorDetailScreen({ route }) {
           <PagoNuevo
             collectorId={collectorId}
             debtorId={deudorId}
-            actualizarPantalla={actualizarPantalla} // Pasamos la nueva función aquí
+            actualizarPantalla={actualizarPantalla}
             balance={balance}
           />
         </>

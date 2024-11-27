@@ -1,8 +1,8 @@
 // AutNavigator.js
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "../screens/LoginScreen";
-import TabNavigator from "../components/StackNavigator";
+import LoginScreen from "../../screens/LoginScreen";
+import TabNavigator from "./StackNavigator";
 
 const Stack = createStackNavigator();
 
