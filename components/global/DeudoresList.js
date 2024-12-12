@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    borderRadius: 10 ,
   },
   deudorText: {
     fontSize: 16,

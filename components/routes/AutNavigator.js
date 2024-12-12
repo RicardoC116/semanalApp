@@ -6,22 +6,20 @@ import TabNavigator from "./StackNavigator";
 
 const Stack = createStackNavigator();
 
-const AuthNavigator = ({ isAuthenticated, onLogin, onLogout }) => {
-  return (
-    <Stack.Navigator>
-      {!isAuthenticated ? (
-        // Pantalla de login
-        <Stack.Screen name="Login" options={{ headerShown: false }}>
-          {(props) => <LoginScreen {...props} onLogin={onLogin} />}
-        </Stack.Screen>
-      ) : (
-        // Navegación autenticada
-        <Stack.Screen name="App" options={{ headerShown: false }}>
-          {(props) => <TabNavigator {...props} onLogout={onLogout} />}
-        </Stack.Screen>
-      )}
-    </Stack.Navigator>
-  );
-};
+const AuthNavigator = ({ isAuthenticated, onLogin, onLogout }) => (
+  <Stack.Navigator>
+    {!isAuthenticated ? (
+      // Pantalla de login
+      <Stack.Screen name="Login" options={{ headerShown: false }}>
+        {(props) => <LoginScreen {...props} onLogin={onLogin} />}
+      </Stack.Screen>
+    ) : (
+      // Navegación autenticada
+      <Stack.Screen name="App" options={{ headerShown: false }}>
+        {(props) => <TabNavigator {...props} onLogout={onLogout} />}
+      </Stack.Screen>
+    )}
+  </Stack.Navigator>
+);
 
 export default AuthNavigator;
