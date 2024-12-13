@@ -4,7 +4,7 @@ import DeudoresList from "../components/global/DeudoresList";
 import useAuth from "../hooks/useAuth"; // Importamos el hook
 
 export default function WeeklyScreen({ navigation }) {
-  const { user } = useAuth(); // Obtenemos el usuario desde el hook
+  const { user } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -32,5 +32,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#333",
   },
-
 });

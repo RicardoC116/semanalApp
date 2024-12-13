@@ -4,6 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 // Ícono para la pestaña Semanal
 export const SemanalIcon = ({ focused, color, size }) => {
@@ -38,4 +39,14 @@ export const ClienteIcono = ({ focused, color, size }) => {
 
 export const DeudoresIcono = ({ focused, color, size }) => {
   return <Icon name="credit-card" color={color} size={size} />;
+};
+
+export const ImprimirIcono = ({ focused, color, size }) => {
+  return <AntDesign name="printer" size={size} color={color} />;
+};
+
+export const ExitIcon = ({ focused, color, size }) => {
+  return (
+    <MaterialCommunityIcons name="exit-to-app" size={size} color={color} />
+  );
 };

@@ -7,7 +7,7 @@ import SemanalScreen from "../../screens/SemanalScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import DeudorDetailScreen from "../../screens/DeudorDetailsScreen";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { SemanalIcon, DiarioIcon } from "../custom/iconos";
+import { SemanalIcon, DiarioIcon, ExitIcon } from "../custom/iconos";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -24,7 +24,9 @@ const DiarioStack = ({ onLogout }) => (
         ),
         headerRight: () => (
           <TouchableOpacity onPress={onLogout} style={styles.logoutButton}>
-            <Text style={styles.logoutText}>Cerrar sesión</Text>
+            <Text style={styles.logoutText}>
+              <ExitIcon size={26} color={"#000"} />
+            </Text>
           </TouchableOpacity>
         ),
       }}
@@ -53,7 +55,9 @@ const SemanalStack = ({ onLogout }) => (
         ),
         headerRight: () => (
           <TouchableOpacity onPress={onLogout} style={styles.logoutButton}>
-            <Text style={styles.logoutText}>Cerrar sesión</Text>
+            <Text style={styles.logoutText}>
+              <ExitIcon size={26} color={"black"} />
+            </Text>
           </TouchableOpacity>
         ),
       }}
@@ -106,7 +110,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     paddingVertical: 8,
     paddingHorizontal: 15,
-    backgroundColor: "#EE4E4E",
+    // backgroundColor: "#EE4E4E",
     borderRadius: 5,
     // padding: 5,
   },

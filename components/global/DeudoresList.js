@@ -1,4 +1,5 @@
 // components/global/DeudoresList
+
 import React, { useCallback, useState } from "react";
 import {
   FlatList,
@@ -6,14 +7,20 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  TextInput,
+  View,
 } from "react-native";
 import axios from "../../api/axios";
 import { formatearMonto } from "../custom/dinero";
 import { useFocusEffect } from "@react-navigation/native";
+import InputWithIcon from "../custom/inputWithText";
 
 export default function DeudoresList({ userId, paymentType, navigation }) {
   const [deudores, setDeudores] = useState([]);
+  const [filteredDeudores, setFilteredDeudores] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [focus, setFocus] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -31,6 +38,7 @@ export default function DeudoresList({ userId, paymentType, navigation }) {
         (deudor) => deudor.payment_type === paymentType
       );
       setDeudores(filteredDeudores);
+      setFilteredDeudores(filteredDeudores); // Inicializar la lista filtrada
     } catch (error) {
       console.error("Error al obtener los deudores:", error);
       Alert.alert("Error", "Hubo un problema al obtener los deudores.");
@@ -39,10 +47,25 @@ export default function DeudoresList({ userId, paymentType, navigation }) {
     }
   }, []);
 
+  // Manejar búsqueda
+  const handleSearch = (text) => {
+    setSearchText(text);
+    if (text) {
+      const filtered = deudores.filter(
+        (deudor) =>
+          deudor.name.toLowerCase().includes(text.toLowerCase()) ||
+          String(deudor.contract_number)
+            .toLowerCase()
+            .includes(text.toLowerCase())
+      );
+      setFilteredDeudores(filtered);
+    } else {
+      setFilteredDeudores(deudores);
+    }
+  };
+
   const renderDeudores = ({ item }) => {
     const balanceNumerico = parseFloat(item.balance);
-
-    console.log("Balance numérico:", balanceNumerico);
 
     return (
       <TouchableOpacity
@@ -75,30 +98,59 @@ export default function DeudoresList({ userId, paymentType, navigation }) {
   };
 
   return (
-    <FlatList
-      data={deudores}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={renderDeudores}
-      ListEmptyComponent={<Text>No hay clientes asociados</Text>}
-    />
+    <View style={styles.container}>
+      <View>
+        {/* Barra de búsqueda */}
+        <InputWithIcon
+          value={searchText}
+          onChangeText={handleSearch}
+          focus={focus}
+          placeholder="Buscar usuario..."
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+        />
+      </View>
+      <View style={styles.resultsContainer}>
+        <FlatList
+          data={filteredDeudores}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderDeudores}
+          ListEmptyComponent={<Text>No hay clientes asociados</Text>}
+        />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  resultsContainer: {
+    marginTop: 10,
+  },
+  searchBar: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 10,
+    margin: 10,
+    paddingHorizontal: 10,
+  },
   deudorItem: {
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
-    borderRadius: 10 ,
+    borderRadius: 10,
   },
   deudorText: {
     fontSize: 16,
     color: "#333",
   },
   deuda: {
-    backgroundColor: "#FBFBFB", // Rojo para deudas
+    backgroundColor: "#FBFBFB",
   },
   sinBalance: {
-    backgroundColor: "#A1DD70", // Verde para balance en 0
+    backgroundColor: "#A1DD70",
   },
 });
