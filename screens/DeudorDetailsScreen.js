@@ -6,6 +6,7 @@ import { formatearMonto } from "../components/custom/dinero";
 import HistorialPagos from "../components/global/HistorialPagos";
 import PagoNuevo from "../components/global/pagoNuevo";
 import { useFocusEffect } from "@react-navigation/native";
+import { capitalizeFirstLetter } from "../components/custom/letas";
 
 export default function DeudorDetailScreen({ route }) {
   const { deudorId, name, collectorId, balance } = route.params;
@@ -81,13 +82,37 @@ export default function DeudorDetailScreen({ route }) {
       {deudorDetails && (
         <>
           <Text style={styles.detailText}>
-            Tipo de pago: {deudorDetails.payment_type}
+            <Text
+              style={{
+                fontWeight: 500,
+                fontSize: 18,
+              }}
+            >
+              Tipo de pago:
+            </Text>{" "}
+            {capitalizeFirstLetter(deudorDetails.payment_type)}
           </Text>
           <Text style={styles.detailText}>
-            Total a pagar: {formatearMonto(deudorDetails.total_to_pay)}
+            <Text
+              style={{
+                fontWeight: 500,
+                fontSize: 18,
+              }}
+            >
+              Total a pagar:
+            </Text>{" "}
+            {formatearMonto(deudorDetails.total_to_pay)}
           </Text>
           <Text style={styles.detailText}>
-            Balance: {formatearMonto(deudorDetails.balance)}
+            <Text
+              style={{
+                fontWeight: 500,
+                fontSize: 18,
+              }}
+            >
+              Balance:
+            </Text>{" "}
+            {formatearMonto(deudorDetails.balance)}
           </Text>
 
           {/* HistorialPagos */}
@@ -115,6 +140,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "start",
   },
   detailText: {
     fontSize: 18,

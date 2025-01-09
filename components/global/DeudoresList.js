@@ -86,12 +86,38 @@ export default function DeudoresList({ userId, paymentType, navigation }) {
           });
         }}
       >
-        <Text style={styles.deudorText}>Nombre - {item.name}</Text>
         <Text style={styles.deudorText}>
-          Monto a pagar {formatearMonto(item.amount)}
+          <Text
+            style={{
+              fontWeight: 500,
+              fontSize: 18,
+            }}
+          >
+            Nombre -
+          </Text>{" "}
+          {item.name}
         </Text>
         <Text style={styles.deudorText}>
-          Balance {formatearMonto(item.balance)}
+          <Text
+            style={{
+              fontWeight: 500,
+              fontSize: 18,
+            }}
+          >
+            Monto a pagar -
+          </Text>{" "}
+          {formatearMonto(item.amount)}
+        </Text>
+        <Text style={styles.deudorText}>
+          <Text
+            style={{
+              fontWeight: 500,
+              fontSize: 18,
+            }}
+          >
+            Balance -
+          </Text>{" "}
+          {formatearMonto(item.balance)}
         </Text>
       </TouchableOpacity>
     );

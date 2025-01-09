@@ -1,15 +1,26 @@
 // LoginScreen.js
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "../api/axios";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+  Image,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // Importar iconos de Expo
 
 export default function LoginScreen({ onLogin }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleLogin = async () => {
-    // Se intenta iniciar sesión y se verifica si fue exitoso
     try {
       const success = await onLogin(name, password);
       if (!success) {
@@ -26,22 +37,41 @@ export default function LoginScreen({ onLogin }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Iniciar Sesión</Text>
+      <Image
+        source={require("../assets/adaptive-icon1.png")}
+        style={styles.logo}
+      />
       <TextInput
         value={name}
         onChangeText={setName}
         placeholder="Nombre"
+        placeholderTextColor="#888"
         autoCapitalize="none"
         style={styles.input}
       />
-      <TextInput
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Contraseña"
-        secureTextEntry
-        style={styles.input}
-      />
-      <Button title="Login" onPress={handleLogin} color="#007bff" />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Contraseña"
+          placeholderTextColor="#888"
+          secureTextEntry={!showPassword}
+          style={styles.passwordInput}
+        />
+        <TouchableOpacity
+          onPress={togglePasswordVisibility}
+          style={styles.eyeIcon}
+        >
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={20}
+            color="#888"
+          />
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -49,24 +79,54 @@ export default function LoginScreen({ onLogin }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#000", // Fondo negro
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
-    backgroundColor: "#f8f9fa",
+    padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#333",
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 35,
+    borderRadius: 50,
+    backgroundColor: "#1c1c1c",
   },
   input: {
     width: "100%",
-    padding: 10,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: "#ced4da",
+    padding: 15,
+    marginBottom: 15,
     borderRadius: 5,
-    backgroundColor: "#fff",
+    backgroundColor: "#1c1c1e",
+    color: "#fff",
+    fontSize: 16,
+  },
+  passwordContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1c1c1e",
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 15,
+    fontSize: 16,
+    color: "#fff",
+  },
+  eyeIcon: {
+    padding: 10,
+  },
+  button: {
+    width: "100%",
+    paddingVertical: 15,
+    borderRadius: 5,
+    backgroundColor: "#89A8B2", // Color del botón
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#000",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

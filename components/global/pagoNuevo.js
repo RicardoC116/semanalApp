@@ -1,13 +1,84 @@
 // PagoNuevo.js
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
+import { View, TextInput, StyleSheet, Button, Alert } from "react-native";
 import axios from "../../api/axios";
+import * as Print from "expo-print"; // Importar Print para impresión
 import { formatearMonto } from "../custom/dinero";
 
 const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
-  console.log("IDs en PagoNuevo:", { collectorId, debtorId });
-
   const [amount, setAmount] = useState("");
+
+  const imprimirRecibo = async (
+    monto,
+    fecha,
+    balanceAnterior,
+    balanceActual
+  ) => {
+    const htmlContent = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              text-align: center;
+              font-size: 12px;
+            }
+            .container {
+              width: 100%;
+              padding: 10px;
+              border: 1px solid #000;
+              margin: 0 auto;
+            }
+            h1 {
+              font-size: 16px;
+              margin-bottom: 5px;
+            }
+            p {
+              margin: 5px 0;
+              line-height: 1.4;
+            }
+            .bold {
+              font-weight: bold;
+            }
+            .footer {
+              font-size: 10px;
+              margin-top: 10px;
+              border-top: 1px dashed #000;
+              padding-top: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>COBRO ST</h1>
+            <p><span class="bold">Fecha:</span> ${fecha}</p>
+            <p><span class="bold">Monto del Pago:</span> ${formatearMonto(
+              monto
+            )}</p>
+            <p><span class="bold">Balance Anterior:</span> ${formatearMonto(
+              balanceAnterior
+            )}</p>
+            <p><span class="bold">Balance Actual:</span> ${formatearMonto(
+              balanceActual
+            )}</p>
+            <p>Recibimos su pago. ¡Gracias!</p>
+            <div class="footer">
+              Este recibo no reemplaza una factura fiscal.<br/>
+              Guarde este recibo para cualquier aclaración.
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    try {
+      await Print.printAsync({ html: htmlContent });
+    } catch (error) {
+      console.error("Error al imprimir el recibo:", error);
+    }
+  };
 
   const handlePayment = async () => {
     const montoPago = parseFloat(amount);
@@ -25,30 +96,72 @@ const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
       );
     }
 
+    const balanceAnterior = balance;
+    const balanceActual = balanceAnterior - montoPago;
+
     try {
       const paymentData = {
         collector_id: collectorId,
         debtor_id: debtorId,
-        amount: parseFloat(amount),
+        amount: montoPago,
         payment_date: new Date().toISOString(),
       };
-
-      console.log("Datos de pago enviados:", paymentData);
 
       // Envío del pago al backend
       const response = await axios.post("/cobros/registrar", paymentData);
 
       if (response.status === 201) {
-        Alert.alert("Éxito", "El pago fue registrado exitosamente.");
-        setAmount(""); // Reinicia el monto
+        Alert.alert("Éxito", "El pago fue registrado exitosamente.", [
+          {
+            text: "Imprimir Recibo",
+            onPress: () => {
+              const fechaPago = new Date().toLocaleDateString();
+              imprimirRecibo(
+                montoPago,
+                fechaPago,
+                balanceAnterior,
+                balanceActual
+              );
+            },
+          },
+          {
+            text: "Cerrar",
+            style: "cancel",
+          },
+        ]);
 
-        // Actualizar Pantalla
-        actualizarPantalla();
+        setAmount(""); // Reinicia el monto
+        actualizarPantalla(); // Actualizar la pantalla
       }
     } catch (error) {
       console.error("Error al registrar el pago:", error);
       Alert.alert("Error", "Hubo un problema al registrar el pago.");
     }
+  };
+
+  const confirmarPago = () => {
+    Alert.alert(
+      "Confirmación",
+      `¿Deseas registrar el pago por ${formatearMonto(amount)}?`,
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Aceptar",
+          onPress: () =>
+            Alert.alert(
+              "Confirmación Final",
+              "¿Estás completamente seguro de registrar este pago?",
+              [
+                { text: "Cancelar", style: "cancel" },
+                { text: "Sí, registrar", onPress: handlePayment },
+              ]
+            ),
+        },
+      ]
+    );
   };
 
   return (
@@ -60,24 +173,7 @@ const PagoNuevo = ({ collectorId, debtorId, actualizarPantalla, balance }) => {
         onChangeText={setAmount}
         keyboardType="numeric"
       />
-      <Button
-        title="Registrar Pago"
-        onPress={() =>
-          Alert.alert(
-            "Alerta",
-            "¿Estás seguro de introducir este monto?",
-            [
-              {
-                text: "Cancelar",
-                onPress: () => console.log("Cancelar"),
-                style: "cancel",
-              },
-              { text: "Aceptar", onPress: handlePayment },
-            ],
-            { cancelable: false }
-          )
-        }
-      />
+      <Button title="Registrar Pago" onPress={confirmarPago} />
     </View>
   );
 };
