@@ -1,0 +1,80 @@
+// Estos son los datos que se imprimen en el recibo
+
+// Pre$ta Mas = Nombre del negocio, que este centrado
+// (Nombre del cliente) que este a la izquierda
+
+// Estos seran los datos del centro el cual abarcara la mitad de la hoja
+// Fecha
+// Numero de cuenta = account number
+// Pago realizado = pago
+// Saldo = balance
+
+// Una nota como funalizacion
+// Recuerde realozar sus pagos a tiempo para para tener buenos beneficios en su proximo credito
+
+const imprimirRecibo = async (monto, fecha, balanceAnterior, balanceActual) => {
+  const htmlContent = `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-size: 12px;
+          }
+          .container {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            margin: 0 auto;
+          }
+          h1 {
+            font-size: 16px;
+            margin-bottom: 5px;
+          }
+          p {
+            margin: 5px 0;
+            line-height: 1.4;
+          }
+          .bold {
+            font-weight: bold;
+          }
+          .footer {
+            font-size: 10px;
+            margin-top: 10px;
+            border-top: 1px dashed #000;
+            padding-top: 5px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Pre$ta Mas</h1>
+          <p><span class="bold">Fecha:</span> ${fecha}</p>
+          <p><span class="bold">Monto del Pago:</span> ${formatearMonto(
+            monto
+          )}</p>
+          <p><span class="bold">Balance Anterior:</span> ${formatearMonto(
+            balanceAnterior
+          )}</p>
+          <p><span class="bold">Balance Actual:</span> ${formatearMonto(
+            balanceActual
+          )}</p>
+          <p>Recibimos su pago. ¡Gracias!</p>
+          <div class="footer">
+            Recuerde realizar sus pagos a tiempo para para tener buenos beneficios en su proximo credito.<br/>
+            Guarde este recibo para cualquier aclaración.
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  try {
+    await Print.printAsync({ html: htmlContent });
+  } catch (error) {
+    console.error("Error al imprimir el recibo:", error);
+  }
+};

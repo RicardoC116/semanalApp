@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "COBRO ST",
+    "name": "COBRO VC",
     "slug": "semanal-app-v2",
-    "version": "1.0.0",
+    "version": "2.2.3",
     "orientation": "portrait",
     "icon": "./assets/icon1.png",
     "userInterfaceStyle": "light",

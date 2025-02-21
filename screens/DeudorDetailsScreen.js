@@ -1,6 +1,13 @@
 // DeudorDetailScreen.js
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import axios from "../api/axios";
 import { formatearMonto } from "../components/custom/dinero";
 import HistorialPagos from "../components/global/HistorialPagos";
@@ -46,7 +53,7 @@ export default function DeudorDetailScreen({ route }) {
   const cargarHistorialPagos = async () => {
     try {
       const response = await axios.get(`/cobros/deudor/${deudorId}`);
-      setCobros(response.data); // Actualizamos el estado del historial
+      setCobros(response.data.reverse()); // Actualizamos el estado del historial
     } catch (error) {
       console.error("Error al cargar el historial de pagos:", error);
     }
@@ -84,7 +91,7 @@ export default function DeudorDetailScreen({ route }) {
           <Text style={styles.detailText}>
             <Text
               style={{
-                fontWeight: 500,
+                fontWeight: 800,
                 fontSize: 18,
               }}
             >
@@ -95,7 +102,7 @@ export default function DeudorDetailScreen({ route }) {
           <Text style={styles.detailText}>
             <Text
               style={{
-                fontWeight: 500,
+                fontWeight: 800,
                 fontSize: 18,
               }}
             >
@@ -106,7 +113,7 @@ export default function DeudorDetailScreen({ route }) {
           <Text style={styles.detailText}>
             <Text
               style={{
-                fontWeight: 500,
+                fontWeight: 800,
                 fontSize: 18,
               }}
             >
@@ -114,6 +121,32 @@ export default function DeudorDetailScreen({ route }) {
             </Text>{" "}
             {formatearMonto(deudorDetails.balance)}
           </Text>
+          <Text style={styles.detailText}>
+            <Text
+              style={{
+                fontWeight: 800,
+                fontSize: 18,
+              }}
+            >
+              Pago Sugerido
+            </Text>{" "}
+            {formatearMonto(deudorDetails.suggested_payment)}
+          </Text>
+
+          {deudorDetails.numero_telefono ? (
+            <View style={styles.phoneContainer}>
+              <Text style={styles.phoneLabel}>Numero de Telefono: </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  Linking.openURL(`tel:${deudorDetails.numero_telefono}`)
+                }
+              >
+                <Text style={styles.phoneNumber}>
+                  {deudorDetails.numero_telefono}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
 
           {/* HistorialPagos */}
           <HistorialPagos debtorId={deudorId} cobros={cobros} />
@@ -123,6 +156,8 @@ export default function DeudorDetailScreen({ route }) {
             debtorId={deudorId}
             actualizarPantalla={actualizarPantalla}
             balance={balance}
+            nombreDeudor={name}
+            numeroTarjeta={deudorDetails.contract_number}
           />
         </>
       )}
@@ -145,5 +180,18 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 18,
     marginBottom: 10,
+  },
+  phoneNumber: {
+    color: "blue",
+    textDecorationLine: "underline",
+    fontSize: 18,
+  },
+  phoneContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  phoneLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
